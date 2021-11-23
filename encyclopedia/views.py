@@ -51,7 +51,7 @@ def create_page(request):
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
             if not util.get_entry(title):
-                util.save_entry(title, content)
+                util.save_entry(title, f'# {title}\n\n{content}')
                 return HttpResponseRedirect(reverse('getPage', args=(title,)))    
             else:
                 messages.error(request, "Page already exists!")
@@ -84,9 +84,7 @@ def edit_page(request, entry):
             form = forms.PageForm(request.POST)
             if form.is_valid():
                 content = form.cleaned_data["content"]
-                util.save_entry(entry, content)
+                util.save_entry(entry, f'# {entry}\n\n{content}')
                 return HttpResponseRedirect(reverse('getPage', args=(entry,)))
 
     return HttpResponseRedirect(reverse('index'))
-
-

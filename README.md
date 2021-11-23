@@ -36,7 +36,7 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-Inside wiki app directory run:
+Inside encyclopedia app directory run:
 
 ```bash
 python manage.py runserver
