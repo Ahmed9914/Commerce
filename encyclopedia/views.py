@@ -84,7 +84,7 @@ def edit_page(request, entry):
             form = forms.PageForm(request.POST)
             if form.is_valid():
                 content = form.cleaned_data["content"]
-                util.save_entry(entry, f'# {entry}\n\n{content}')
+                util.save_entry(entry, content)
                 return HttpResponseRedirect(reverse('getPage', args=(entry,)))
 
     return HttpResponseRedirect(reverse('index'))
