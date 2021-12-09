@@ -8,6 +8,15 @@
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
     <body>
+        <!-- Messages handling -->
+        {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li class="alert {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+
         <h1>Auctions</h1>
         <div>
             {% if user.is_authenticated %}
@@ -17,20 +26,50 @@
             {% endif %}
         </div>
         <ul class="nav">
+
+            <!-- Active Listings -->
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>
+
+            <!-- Categories -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+            </li>
+
             {% if user.is_authenticated %}
+                {% url 'create_listing' as create_listing %}
+                {% if request.path != create_listing %}
+
+                <!-- Create Listing -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ create_listing }}">Create Listing</a>
+                </li>
+
+                {% endif %}
+
+                <!-- Watchlist -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'watchlist' %}"> My Watchlist </a>
+                </li>
+
+                <!-- Logout -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                 </li>
+
             {% else %}
+
+                <!-- Login -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}">Log In</a>
                 </li>
+
+                <!-- Register -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'register' %}">Register</a>
                 </li>
+
             {% endif %}
         </ul>
         <hr>
