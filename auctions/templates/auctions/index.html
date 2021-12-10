@@ -1,9 +1,8 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {# <h2>Active Listings</h2> #}
     {% if category %}
-    <h2> Active Listings under: {{category}} category</h2>
+    <h2> Active Listings under <b>{{ category.name }}</b> category</h2>
     {% endif %}
 
     {% if watchlist %}
@@ -17,11 +16,9 @@
 
                 {% if listing.image_url %}
                 <div class="card-img-top img-small-wrapper">
-                    <!--div class="image-wrapper"-->
                         <a href="{% url 'listing' listing.id %}">
                             <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
                         </a>
-                    <!--/div-->
                 </div>
                 {% endif %}
     

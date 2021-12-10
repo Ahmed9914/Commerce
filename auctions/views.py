@@ -34,14 +34,15 @@ def get_category(request, category_id):
     return render(request, "auctions/index.html", {
         'listings': Listing.objects.filter(category=category_id,
                                            is_active=True),
-        'category': Category.objects.filter(id=category_id),
+        'category': Category.objects.filter(id=category_id).first(),
     })
 
 
 def get_listing(request, listing_id):
     listing = get_object_or_404(Listing, id=listing_id)
-    comments = Comment.objects.filter(commented_listing=listing)\
-        .order_by('-created')
+    comments = Comment.objects.filter(commented_listing=listing)
+    listing_watchers = listing.watched_item.all()
+
     # Handle the following if the user is authenticated
     if request.user.is_authenticated:
         # Get the current winner of the bid
@@ -54,6 +55,7 @@ def get_listing(request, listing_id):
 
         # Handle the following while the listing is active
         if listing.is_active:
+
             # if the current user is the listing creator
             if listing.creator == request.user:
                 # Done: Add close bidding form
@@ -64,6 +66,7 @@ def get_listing(request, listing_id):
                                      'Listing closed successfully')
                     return HttpResponseRedirect(reverse('listing',
                                                 args=(listing.id,)))
+
             # Done: Add new bid form
             if request.method == 'POST' and 'add_bid' in request.POST:
                 bid_form = BidForm(request.POST)
@@ -74,13 +77,17 @@ def get_listing(request, listing_id):
                         if new_bid.amount > current_bid.amount:
                             valid_bid = True
                     else:
-                        if new_bid.amount > listing.bid_amount:
+                        if new_bid.amount >= listing.bid_amount:
                             valid_bid = True
 
                     if valid_bid:
                         new_bid.item_on_bid = listing
                         new_bid.bidder = request.user
                         listing.bid_amount = new_bid.amount
+                        # Additional feature to add the listing to
+                        # the bidder watchlist
+                        if request.user not in listing_watchers:
+                            listing.watched_item.add(request.user)
                         new_bid.save()
                         listing.save()
                         messages.success(request,
@@ -113,7 +120,7 @@ def get_listing(request, listing_id):
                     messages.error(request, comment_form.errors)
 
             # Done: Add watchlist functionality
-            if request.user in listing.watched_item.all():
+            if request.user in listing_watchers:
                 watching = True
             else:
                 watching = False
@@ -159,9 +166,10 @@ def create_listing(request):
     if request.method == "POST":
         category_name = request.POST['category']
         if category_name != '':
-            category = categories.filter(name=category_name)
+            category = categories.filter(name=category_name).first()
             if not category:
                 category = Category(name=category_name)
+                category.save()
         else:
             category = None
         form = ListingForm(request.POST)
@@ -169,7 +177,6 @@ def create_listing(request):
             listing = form.save(commit=False)
             listing.creator = request.user
             if category:
-                category.save()
                 listing.category = category
             listing.save()
             messages.success(request, 'Listing added successfully')

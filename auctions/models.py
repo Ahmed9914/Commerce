@@ -56,5 +56,8 @@ class Comment(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE,
                                   related_name='user_comment')
 
+    class Meta:
+        ordering = ('-created',)
+
     def __str__(self):
         return f'Comment by {self.commenter}'

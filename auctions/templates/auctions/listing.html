@@ -1,140 +1,140 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-{% with listing.is_active as is_active %}
+    {% with listing.is_active as is_active %}
 
-<!-- Listing container -->
-<div class="card">
-    <div class="row no-gutters">
+    <!-- Listing container -->
+    <div class="card">
+        <div class="row no-gutters">
 
-        <!-- Image -->
-        {% if listing.image_url %}
-        <aside class="col-md-3">
-            <article class="gallery-wrap">
-                <div class="img-big-wrap">
-                    <img src="{{ listing.image_url }}">
-                </div>
+            <!-- Image -->
+            {% if listing.image_url %}
+            <aside class="col-md-3">
+                <article class="gallery-wrap">
+                    <div class="img-big-wrap">
+                        <img src="{{ listing.image_url }}">
+                    </div>
 
-            </article>
-        </aside>
-        {% endif %}
+                </article>
+            </aside>
+            {% endif %}
 
-        <!-- Body -->
-        <main class="col-md-9 border-left">
-            <article class="content-body">
+            <!-- Body -->
+            <main class="col-md-9 border-left">
+                <article class="content-body">
 
-                <!-- Title -->
-                <h2 class="title">{{ listing.title }}</h2>
+                    <!-- Title -->
+                    <h2 class="title">{{ listing.title }}</h2>
 
-                <!-- Current Bid amount -->
-                {% if is_active %}
-                <div class="mb-3">
-                    <var class="price h4">Current bid: ${{ listing.bid_amount }}</var>
-                </div>
-                {% else %}
-                    {% if winner %}
-                    <p class="alert alert-success"> Congrats you won the bidding </p>
-                    {% else %}
-                    <p class="alert alert-danger"> The listing is not available for bidding </p>
-                    {% endif %}
-                {% endif %}
-
-                <!-- Description and creator -->
-                <p>
-                    {{ listing.description }}
-                    <hr>
-                    Created by: {{ listing.creator }}
-                </p>
-
-                {# Authenticated user check #}
-                {% if user.is_authenticated %}
-
-                    {# Active Listing #}
+                    <!-- Current Bid amount -->
                     {% if is_active %}
-
-                        {# Current user is the creator of Listing #}
-                        {% if listing.creator.username == user.username %}
-                            {# Done: 1. Add "close bidding" button #}
-                            <form method="post">
-                                {% csrf_token %}
-                                <input class="btn btn-outline-danger" type="submit" name="close_bid" value="Close Bid"/>
-                            </form>
-
+                    <div class="mb-3">
+                        <var class="price h4">Current bid: ${{ listing.bid_amount }}</var>
+                    </div>
+                    {% else %}
+                        {% if winner %}
+                        <p class="alert alert-success"> Congrats you won the bidding </p>
                         {% else %}
-                            {# Done: 2. Add bidding form #}
-                            <hr>
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="form-row">
-                                    <div class="form-group col-sm-2">
-                                        <input class="form-control" type="number" name="amount" step="any" placeholder="Add new bid">
-                                    </div>
-                                    <div class="col-sm-2"><input class="btn btn-primary" type="submit" name="add_bid" value="Add Bid" /></p>
-                                    </div>
-                                </div>
-                            </form>
+                        <p class="alert alert-danger"> The listing is not available for bidding </p>
+                        {% endif %}
+                    {% endif %}
 
-                            {# Done: 3. (Add to)/(remove from) watchlist button #}
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="mt-4">
-                                    {% if watching %}
-                                    <input class="btn btn-primary" type="submit" name="toggle_watchlist" value="Remove from watchlist"/>
-                                    {% else %}
-                                    <input class="btn btn-primary" type="submit" name="toggle_watchlist" value="Add to watchlist"/>
-                                    {% endif %}
-                                </div>
-                                                                
-                            </form>
+                    <!-- Description and creator -->
+                    <p>
+                        {{ listing.description }}
+                        <hr>
+                        Created by: {{ listing.creator }}
+                    </p>
+
+                    {# Authenticated user check #}
+                    {% if user.is_authenticated %}
+
+                        {# Active Listing #}
+                        {% if is_active %}
+
+                            {# Current user is the creator of Listing #}
+                            {% if listing.creator.username == user.username %}
+                                {# Done: 1. Add "close bidding" button #}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input class="btn btn-outline-danger" type="submit" name="close_bid" value="Close Bid"/>
+                                </form>
+
+                            {% else %}
+                                {# Done: 2. Add bidding form #}
+                                <hr>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-2">
+                                            <input class="form-control" type="number" name="amount" step="any" placeholder="Add new bid">
+                                        </div>
+                                        <div class="col-sm-2"><input class="btn btn-primary" type="submit" name="add_bid" value="Add Bid" /></p>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                {# Done: 3. (Add to)/(remove from) watchlist button #}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="mt-4">
+                                        {% if watching %}
+                                        <input class="btn btn-primary" type="submit" name="toggle_watchlist" value="Remove from watchlist"/>
+                                        {% else %}
+                                        <input class="btn btn-primary" type="submit" name="toggle_watchlist" value="Add to watchlist"/>
+                                        {% endif %}
+                                    </div>
+                                                                    
+                                </form>
+
+                            {% endif %}
 
                         {% endif %}
 
                     {% endif %}
 
-                {% endif %}
-
-            </article>
-        </main>
+                </article>
+            </main>
+        </div>
     </div>
-</div>
 
-{# Done: 4. Add comments on listing #}
-<div class="row">
-    <div class="col-md-9">
-        <header class="section-heading">
-            <h3>Comments </h3>
-        </header>
+    {# Done: 4. Add comments on listing #}
+    <div class="row">
+        <div class="col-md-9">
+            <header class="section-heading">
+                <h3>Comments </h3>
+            </header>
 
-        {% for comment in comments %}
-        <article class="box mb-3">
-            <div class="icontext w-100">
-                <div class="text">
-                    <h6 class="mb-1">Comment by {{ comment.commenter }} at {{ comment.created }} </h6>
+            {% for comment in comments %}
+            <article class="box mb-3">
+                <div class="icontext w-100">
+                    <div class="text">
+                        <h6 class="mb-1">Comment by {{ comment.commenter }} at {{ comment.created }} </h6>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-3">
-                <p>
-                    {{ comment.content|linebreaks }}<hr>
-                </p>
-            </div>
-        </article>
-        {% empty %}
-        <p>There are no comments yet.</p>
-        {% endfor %}
+                <div class="mt-3">
+                    <p>
+                        {{ comment.content|linebreaks }}<hr>
+                    </p>
+                </div>
+            </article>
+            {% empty %}
+            <p>There are no comments yet.</p>
+            {% endfor %}
+        </div>
     </div>
-</div>
 
-{# Done: 5. Add comments form #}
-{% if is_active %}
-<form method="post">
-    {% csrf_token %}
-    <div class="form-group col-sm-4"><label for="id_comment">Add new comment:</label>
-        <textarea class="form-control" name="content" cols="40" rows="10" maxlength="256" id="id_comment"></textarea>
-    </div>
-    <div><input type="submit" class="btn btn-primary" value="Add Comment" name="add_comment"></div>
-</form>
-{% endif %}
+    {# Done: 5. Add comments form #}
+    {% if is_active %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group col-sm-4"><label for="id_comment">Add new comment:</label>
+            <textarea class="form-control" name="content" maxlength="256" id="id_comment"></textarea>
+        </div>
+        <div><input type="submit" class="btn btn-primary" value="Add Comment" name="add_comment"></div>
+    </form>
+    {% endif %}
 
 
-{% endwith %}
+    {% endwith %}
 {% endblock %}
